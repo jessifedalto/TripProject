@@ -8,7 +8,7 @@ import nodemailer from 'nodemailer';
 import { getMailClient } from "../lib/mail";
 
 export async function createTrip(app: FastifyInstance) {
-    app.withTypeProvider<ZodTypeProvider>().post('/trips', { //zod validate variable types
+    app.withTypeProvider<ZodTypeProvider>().post('/trips', { //zod validate variable types and post on database these data
         schema: {
             body: z.object({
                 destination: z.string().min(4),
@@ -28,7 +28,7 @@ export async function createTrip(app: FastifyInstance) {
         if (dayjs(ends_at).isBefore(starts_at))
             throw new ClientError('Invalid trip starts date. Start date is after end date')
 
-        const trip = await prisma.trip.create({
+        const trip = await prisma.trip.create({ //create trips and returns it's id
             data: {
                 destination,
                 starts_at,
